@@ -1,0 +1,6 @@
+@DotNetAssessment.API_HostAddress = http://localhost:5018
+
+GET {{DotNetAssessment.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
