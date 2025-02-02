@@ -1,6 +1,7 @@
-@DotNetAssessment.API_HostAddress = http://localhost:5018
+@DotNetAssessment.API_HostAddress = http://localhost:7081
 
-GET {{DotNetAssessment.API_HostAddress}}/weatherforecast/
+GET {{DotNetAssessment.API_HostAddress}}/api/employee
 Accept: application/json
+
 
 ###

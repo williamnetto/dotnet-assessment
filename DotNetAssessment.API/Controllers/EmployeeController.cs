@@ -1,5 +1,7 @@
-﻿using DotNetAssessment.Domain.Entities;
+﻿using DotNetAssessment.API.Extensions;
+using DotNetAssessment.Domain.Entities;
 using DotNetAssessment.Infrastructure.Services;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DotNetAssessment.API.Controllers;
@@ -9,10 +11,12 @@ namespace DotNetAssessment.API.Controllers;
 public class EmployeeController : ControllerBase
 {
     private readonly IEmployeeService _employeeService;
+    private readonly IValidator<Employee> _employeeValidator;
 
-    public EmployeeController(IEmployeeService employeeService)
+    public EmployeeController(IEmployeeService employeeService, IValidator<Employee> employeeValidator)
     {
         _employeeService = employeeService;
+        _employeeValidator = employeeValidator;
     }
 
     [HttpGet]
@@ -36,6 +40,13 @@ public class EmployeeController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Employee>> CreateEmployee(Employee employee)
     {
+        var validationResult = await _employeeValidator.ValidateAsync(employee);
+
+        if(!validationResult.IsValid){
+            validationResult.AddToModelState(ModelState);
+            return BadRequest(ModelState);
+        }
+
         var createdEmployee = await _employeeService.CreateEmployeeAsync(employee);
         return CreatedAtAction(nameof(CreateEmployee), new { id = createdEmployee.Id }, createdEmployee);
     }
