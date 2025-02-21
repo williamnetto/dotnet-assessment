@@ -1,6 +1,8 @@
 ﻿using DotNetAssessment.API.Controllers;
 using DotNetAssessment.Domain.Entities;
 using DotNetAssessment.Infrastructure.Services;
+using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -9,12 +11,16 @@ namespace DotNetAssessment.Tests.Controllers;
 public class EmployeeControllerTests
 {
     private readonly Mock<IEmployeeService> _mockEmployeeService;
+    private readonly Mock<IValidator<Employee>> _mockValidator;
+
     private readonly EmployeeController _controller;
 
     public EmployeeControllerTests()
     {
         _mockEmployeeService = new Mock<IEmployeeService>();
-        _controller = new EmployeeController(_mockEmployeeService.Object);
+        _mockValidator = new Mock<IValidator<Employee>>();
+
+        _controller = new EmployeeController(_mockEmployeeService.Object, _mockValidator.Object);
     }
 
     [Fact]
@@ -91,7 +97,19 @@ public class EmployeeControllerTests
     public async Task CreateEmployee_ShouldReturnCreatedAtActionResult_WhenEmployeeIsCreated()
     {
         // Arrange
-        var employee = new Employee { Id = 1, FirstName = "John", LastName = "Doe", HireDate = DateTime.Now };
+        var employee = new Employee { 
+            Id = 1, 
+            FirstName = "John", 
+            LastName = "Doe", 
+            HireDate = DateTime.Now,
+            Address = "Av.Test",
+            Phone = "+123456789",
+            DepartmentId = 1,
+        };
+        var validationResult = new ValidationResult();
+        validationResult.Errors = [];
+
+        _mockValidator.Setup(s => s.ValidateAsync(employee, new CancellationToken())).ReturnsAsync(validationResult);
 
         _mockEmployeeService.Setup(service => service.CreateEmployeeAsync(employee))
             .ReturnsAsync(employee);

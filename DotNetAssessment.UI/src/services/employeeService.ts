@@ -22,6 +22,7 @@ export const deleteEmployee = async (id: number): Promise<void> => {
 
 export const createEmployee = async (newEmployee: Employee): Promise<Employee> => {
     try {
+        console.log(newEmployee)
         const response = await customAxios.post('employee', newEmployee);
         return response.data; 
     } catch (error) {

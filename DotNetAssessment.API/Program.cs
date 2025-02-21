@@ -1,4 +1,3 @@
-using DotNetAssessment.API.Validators;
 using DotNetAssessment.Domain.Entities;
 using DotNetAssessment.Infrastructure.Data;
 using DotNetAssessment.Infrastructure.Middlewares;

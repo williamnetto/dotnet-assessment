@@ -4,7 +4,7 @@ import { Employee } from "../App";
 import logo from "../assets/user.png";
 import { calculateTimeInCompany } from "../utils/DateTimeHelper";
 import { updateEmployeeDepartment } from "../services/employeeService";
-import { getAllDepartments } from "../services/department";
+import { getAllDepartments } from "../services/departmentService";
 
 interface ViewEmployeeModalProps {
     employee: Employee | null;

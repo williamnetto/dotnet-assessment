@@ -4,23 +4,7 @@ import AddEmployeeModal from './modals/AddEmployeeModal';
 import { getAllEmployees, deleteEmployee } from './services/employeeService';
 import EmployeeCard from './components/EmployeeCard';
 import Loader from './components/Loader';
-
-// Tipos
-interface Department {
-  id: number;
-  name: string;
-}
-
-export interface Employee {
-  id: number
-  firstName: string;
-  lastName: string;
-  hireDate: string;
-  phone: string;
-  address: string;
-  departmentId: number;
-  department: Department;
-}
+import { Employee } from './types/Employee';
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);

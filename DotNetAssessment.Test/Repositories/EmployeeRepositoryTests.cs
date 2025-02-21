@@ -78,7 +78,7 @@ public class EmployeeRepositoryTests
         // Arrange: Reset the database
         ResetDatabase();
 
-        var employee = new Employee { FirstName = "John", LastName = "Doe", HireDate = DateTime.Now, Phone = "123456789", Address = "Address 1", DepartmentId = 1 };
+        var employee = new Employee { FirstName = "John", LastName = "Doe", HireDate = DateTime.Now, Phone = "123456789", Address = "Address 1", DepartmentId = 1, Department = new() };
 
         // Act
         var result = await _repository.CreateEmployeeAsync(employee);
@@ -121,6 +121,7 @@ public class EmployeeRepositoryTests
         employee.FirstName = "Updated John";
 
         // Act
+        employee.Department = new();
         var result = await _repository.UpdateEmployeeAsync(employee);
 
         // Assert

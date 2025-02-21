@@ -41,8 +41,8 @@ public class EmployeeController : ControllerBase
     public async Task<ActionResult<Employee>> CreateEmployee(Employee employee)
     {
         var validationResult = await _employeeValidator.ValidateAsync(employee);
-
-        if(!validationResult.IsValid){
+        if (!validationResult.IsValid)
+        {
             validationResult.AddToModelState(ModelState);
             return BadRequest(ModelState);
         }

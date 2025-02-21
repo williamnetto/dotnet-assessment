@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Employee } from '../App';
+import { Employee } from '../types/Employee';
 import logo from '../assets/user.png';
 import { createEmployee } from '../services/employeeService';
-import { getAllDepartments } from '../services/department';
+import { getAllDepartments } from '../services/departmentService';
 
 interface AddEmployeeModalProps {
   onClose: () => void;
@@ -14,13 +14,14 @@ const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({ onClose, onEmployee
     id: 0,
     firstName: '',
     lastName: '',
-    hireDate: '',
+    hireDate: null,
     phone: '',
     address: '',
     departmentId: 1,
     department: { id: 1, name: 'IT' },
   });
   const [departments, setDepartments] = useState<{ id: number, name: string }[]>([]);
+  const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
 
   // Fetch departments from the API
   useEffect(() => {
@@ -43,17 +44,28 @@ const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({ onClose, onEmployee
     } else {
       setNewEmployee({
         ...newEmployee,
-        [name]: value,
+        [name]: value === '' ? null : value,
       });
     }
   };
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("aaa")
 
-    const response = await createEmployee(newEmployee);
-    onEmployeeCreated(response); // Update the state with the newly created employee
-    onClose();
+    try {
+      const response = await createEmployee(newEmployee);
+      console.log("bbb")
+      onEmployeeCreated(response);
+      onClose();
+    } catch (error: any) {
+      if (error.response && error.response.status === 400) {
+        // Extract validation errors
+        console.log("ccc")
+        setErrors(error.response.data);
+        console.log(errors.firstName)
+      }
+    }
   };
 
   return (
@@ -80,8 +92,10 @@ const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({ onClose, onEmployee
                 value={newEmployee.firstName}
                 onChange={handleInputChange}
                 className="w-full p-2 border border-gray-300 rounded-md"
-                required
               />
+              {errors.FirstName && errors.FirstName.map((error, index) => (
+                <p key={index} className="text-red-500 text-sm">{error}</p>
+              ))}
             </div>
             <div>
               <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">Last Name</label>
@@ -92,8 +106,10 @@ const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({ onClose, onEmployee
                 value={newEmployee.lastName}
                 onChange={handleInputChange}
                 className="w-full p-2 border border-gray-300 rounded-md"
-                required
               />
+              {errors.LastName && errors.LastName.map((error, index) => (
+                <p key={index} className="text-red-500 text-sm">{error}</p>
+              ))}
             </div>
             <div>
               <label htmlFor="hireDate" className="block text-sm font-medium text-gray-700">Hire Date</label>
@@ -101,11 +117,13 @@ const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({ onClose, onEmployee
                 type="date"
                 name="hireDate"
                 id="hireDate"
-                value={newEmployee.hireDate}
+                value={newEmployee.hireDate ?? ''}
                 onChange={handleInputChange}
                 className="w-full p-2 border border-gray-300 rounded-md"
-                required
               />
+              {errors.HireDate && errors.HireDate.map((error, index) => (
+                <p key={index} className="text-red-500 text-sm">{error}</p>
+              ))}
             </div>
           </div>
 
@@ -121,8 +139,10 @@ const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({ onClose, onEmployee
                 value={newEmployee.phone}
                 onChange={handleInputChange}
                 className="w-full p-2 border border-gray-300 rounded-md"
-                required
               />
+              {errors.Phone && errors.Phone.map((error, index) => (
+                <p key={index} className="text-red-500 text-sm">{error}</p>
+              ))}
             </div>
 
             {/* Address */}
@@ -135,8 +155,10 @@ const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({ onClose, onEmployee
                 value={newEmployee.address}
                 onChange={handleInputChange}
                 className="w-full p-2 border border-gray-300 rounded-md"
-                required
               />
+              {errors.Address && errors.Address.map((error, index) => (
+                <p key={index} className="text-red-500 text-sm">{error}</p>
+              ))}
             </div>
 
             {/* Department Dropdown */}
@@ -148,7 +170,6 @@ const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({ onClose, onEmployee
                 value={newEmployee.department.id}
                 onChange={handleInputChange}
                 className="w-full p-2 border border-gray-300 rounded-md"
-                required
               >
                 {departments.map(department => (
                   <option key={department.id} value={department.id}>
@@ -156,6 +177,9 @@ const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({ onClose, onEmployee
                   </option>
                 ))}
               </select>
+              {errors.Department && errors.Department.map((error, index) => (
+                <p key={index} className="text-red-500 text-sm">{error}</p>
+              ))}
             </div>
           </div>
 
